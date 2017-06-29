@@ -20,9 +20,7 @@ are available as run owner, if remote access is allowed. Make sure you're instal
 Role Variables
 --------------
 
-Cognos_BINARY
-------------
-
+### Cognos_BINARY
 
 This hash controls how to send the Cognos binary to the remote hosts.
 
@@ -36,8 +34,7 @@ cognos_binary.dest: Where the role should decompress Cognos Package on remote ho
         dest: /opt/ibm/insttemp
 
 
-Cognos_PACKAGES
-------------
+### Cognos_PACKAGES
 
 The list of packages that the role should install before running the installer. Leave as default unless you know what you're doing.
 
@@ -53,8 +50,8 @@ http://www-969.ibm.com/software/reports/compatibility/clarity-reports/report/htm
         nss-3.13.3-6.el6 (both i686 and x86_64 packages) - 32 and 64 bit nss library for CAM ldap provider
         openmotif-2.3.3-4.el6 (both i686 and x86_64 packages) - 32 and 64 bit openmotif libraries 
 
-Cognos Response File. You will find it after Decompressing in the SUB-Directory linuxi38664h as response.ats 
-------------
+###Cognos Response File.
+You will find it after Decompressing in the SUB-Directory linuxi38664h as response.ats 
 
 
 Choose your configuration from this Response Files Value Table
