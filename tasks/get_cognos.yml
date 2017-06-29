@@ -1,0 +1,15 @@
+---
+# Download a Cognos copy from a custom URL (Could be a http, an ftp whatever.)
+
+- name: Downloading Cognos Packages
+  get_url:
+    url: "{{cognos_binary.url}}"
+    dest: "{{cognos_binary.location}}"
+  when: cognos_binary.url is defined
+
+- name: Decompressing Cognos Server
+  unarchive:
+    src: "{{cognos_binary.location}}"
+    dest: "{{cognos_binary.dest}}"
+    copy: no
+    creates: "{{cognos_binary.dest}}/{{cognos_creates}}"

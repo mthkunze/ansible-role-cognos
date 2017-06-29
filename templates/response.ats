@@ -1,0 +1,31 @@
+[Dialog1]
+Title=Welcome to the Installation Wizard
+DE=0
+EN=1
+[Dialog2]
+Title=IBM License Agreement
+I Agree=y
+[Dialog3]
+Title=Non IBM License Agreement
+I Agree=y
+[Dialog4]
+Title=Installation Location
+APPDIR=/opt/ibm/cognos
+BACKUP=1
+PRODUCTION_RADIO=1
+[Component List]
+C8BISRVR_APP=0
+C8BISRVR_APPLICATION_TIER=0
+C8BISRVR_GATEWAY=0
+C8BISRVR_CONTENT_MANAGER=0
+C8BISRVR_CONTENT_DATABASE=0
+
+{%if global_params is defined %}
+
+** Components Settings
+** --------------------------------
+{% for key, value in global_params.iteritems() %}
+{{ key | upper}}                                   = {{ value }}
+{% endfor %}
+{% endif %}
+

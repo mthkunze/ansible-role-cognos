@@ -1,0 +1,26 @@
+---
+# set password,uid,gid,group_name 
+  
+- name: Creating Cognos Instance Groups
+  group: name="{{item.group_name}}" gid="{{ item.gid | default('888') }}" state=present 
+  with_items: "{{cognos_instances}}"
+
+- name: Creating Cognos Instance Users - Custom home_dir
+  user:
+    name: "{{item.name}}"
+    uid: "{{ item.id | default('888') }}"
+    group: "{{item.group_name}}"
+    password: "{{ item.password | default('ldUMKEu7/QCAY')}}"
+    home: "{{ item.home_directory }}"
+  with_items: "{{cognos_instances}}"
+  when: item.home_directory is defined
+
+- name: Creating Cognos Instance Users - default
+  user:
+    name: "{{item.name}}"
+    uid: "{{ item.id | default('888') }}"
+    group: "{{item.group_name}}"
+    password: "{{ item.password | default('ldUMKEu7/QCAY')}}"
+    home: "/home/{{item.name}}"
+  with_items: "{{cognos_instances}}"
+  when: item.home_directory is not defined

@@ -1,0 +1,60 @@
+#!/bin/bash
+#-------------------------------------------------------------------------------
+#   Cognos Start/Stop script
+#-------------------------------------------------------------------------------
+# Global Vars
+COGNOS_HOME=/opt/ibm/cognos
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$COGNOS_HOME/cm/bin:$COGNOS_HOME/rs/bin:$COGNOS_HOME/gw/bin
+#JAVA_HOME=/usr/java/jre1.5.0_12
+JAVA_HOME=/usr/lib/jvm/jre-1.8.0
+
+export JAVA_HOME LD_LIBRARY_PATH
+
+startCognos()
+{
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: [START INITIATED]"
+        cd ${COGNOS_HOME}
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: Starting CM..."
+        ./cm/bin/cogconfig.sh -s
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: CM Started."
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: Starting RS..."
+        ./rs/bin/cogconfig.sh -s
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: RS Started."
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: [START COMPLETE] All services are up."
+}
+stopCognos()
+{
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: [STOP INITIATED]"
+        cd ${COGNOS_HOME}
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: Stopping RS..."
+        ./rs/bin/cogconfig.sh -stop
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: RS Stopped."
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: Stopping CM..."
+        ./cm/bin/cogconfig.sh -stop
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: CM Stopped."
+
+        echo $(date '+%Y-%m-%d %H:%M:%S') ":: [STOP COMPLETE] All services are down."
+}
+
+case "$1" in
+'start')
+        startCognos
+        ;;
+'stop')
+        stopCognos
+        ;;
+'restart')
+        stopCognos
+        sleep 10
+        startCognos
+        ;;
+*)
+        echo "Usage: ${0} { start | stop | restart }"
+        ;;
+esac
+exit

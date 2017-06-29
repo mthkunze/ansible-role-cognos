@@ -1,0 +1,42 @@
+---
+# This is the most rich example, with all posible customizations
+  - hosts: all
+    gather_facts: True
+    pre_tasks:
+      # This is required to test on RedHat (No license on vagrant, so no packages available)
+      - name: Installing OL Public repository
+        get_url: 
+          url: "{{yum_repo}}"
+          dest: /etc/yum.repos.d/public-yum-release.repo
+        tags: download
+
+      - name: Create Cognos Directory
+        file:
+          path: /cognos
+          state: directory
+          mode: 0755
+
+    roles:
+      - cognos
+    vars:
+       # Define the cognos_binary and setup the URL to download.
+       # Variable location define where should put cognos on ansible machine
+       # Variable dest define where should decompress Cognos on remote host
+      cognos_binary:
+        url: "fileserver://downloads/bi_svr_10.2.2_l86_ml.tar.gz"
+        location: "/vagrant/bi_svr_10.2.2_l86_ml.tar.gz/"
+        dest: "/tmp"
+
+      cognos_instances:
+        - instance: "Cognos"
+          name: "cognos"
+          group_name: "cognos"
+          home_directory: "/home/cognos"
+
+        - instance: "Cognos"
+          name: "cognos"
+          group_name: "cognos"
+          home_directory: "/cognos/cognos"
+          options:
+            autostart: "YES"
+            start_during_install: "YES"

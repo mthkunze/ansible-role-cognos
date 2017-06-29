@@ -1,0 +1,16 @@
+---
+cognos_packages:
+ - pam
+ - pam-devel.i686
+ - java-1.8.0
+ - glibc.i686
+ - glibc
+ - compat-libstdc++-33.i686
+ - compat-libstdc++-33
+ - libstdc++-devel.i686
+ - libstdc++
+ - nspr
+ - nss
+ - openmotif
+ - ksh
+ - unzip

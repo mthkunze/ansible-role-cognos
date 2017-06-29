@@ -1,0 +1,101 @@
+#!/usr/bin/python
+import os
+from os.path import expanduser
+
+class Cognos:
+
+    def __init__(self, module):
+
+        self.module = module
+
+
+    def start_instance(self):
+
+        if not self.instance_up():
+            # The start the instance first
+            cmd = ". %s;  ./cm/bin/cogconfig.sh -s" % self.cognosprofile
+            rc, stdout, stderr = self.module.run_command(cmd, use_unsafe_shell=True)
+            if stderr != '' or rc!=0:
+                self.module.fail_json(changed=False, msg="Error, could not startup the cognos manager",
+                                      stderr=stderr, rc=rc, stdout=stdout)
+
+
+    def instance_up(self):
+        cmd = ". %s; ps -ef | grep cognossysc | grep -v grep | wc -l" % self.cognosprofile
+        rc, stdout, stderr = self.module.run_command(cmd, use_unsafe_shell=True)
+
+        if stderr:
+            self.module.fail_json(changed=False, msg='Could not validade if instance is up'
+                                  , stderr=stderr, rc=rc, stdout=stdout)
+
+        return '1' == stdout.strip()
+
+    def find_cognos_home(self):
+        home = expanduser("~")
+        return home
+
+    def parse_params(self):
+
+        self.cognos_name = self.module.params['name']
+        self.instance = self.module.params['instance']
+        self.automatic = self.module.params['automatic']
+        self.path = self.module.params['path']
+#        self.pagesize = self.module.params['pagesize']
+#        self.codeset = self.module.params['codeset']
+#        self.territory = self.module.params['territory']
+        self.cognosprofile = self.find_cognos_profile()
+
+def main():
+    module = AnsibleModule(
+        argument_spec=dict(
+            instance=dict(required=True, type='str'),
+            name=dict(required=True, type='str'),
+            automatic=dict(required=False, default=True, type='bool'),
+#            path=dict(required=False, default=None, type='str'),
+#            pagesize=dict(required=False, default=None, type='str'),
+#            codeset=dict(required=False, default=None, type='str'),
+            territory=dict(required=False, default=None, type='str'),
+        ),
+        supports_check_mode=False,
+        required_together=[['codeset', 'territory']]
+    )
+
+    cognos = Cognos (module)
+    cognos.parse_params()
+
+    # Only if the instance is down
+    cognos.start_instance()
+
+#    if cognos.is_cognos_already_created():
+#        cognos.module.exit_json(changed=False, msg="Database %s already created, moving on!" % cognos.cognos_name)
+#
+#    create_cmd = "cognos \"create database %s " % cognos.cognos_name
+#    options = ""
+#    # This is default True
+#    if not cognos.automatic:
+#        options += " automatic storage no"
+#    if cognos.path:
+#        options += " on %s" % cognos.path
+#
+#        # Validate if automatic_storage == no then only one path can be used
+#        if not cognos.automatic:
+#
+#            #Validate if path contains a comma separated value
+#            if "," in cognos.path:
+#                cognos.module.fail_json(changed=False, msg="If you don't want automatic storage "
+#                                                    "you can't create a Database on more than one path")
+#    if cognos.codeset:
+#        options += " using codeset %s" % cognos.codeset
+#    if cognos.territory:
+#        options += " territory %s" % cognos.territory
+#    if cognos.pagesize:
+#        options += " pagesize %s" % cognos.pagesize
+#
+    cmd = ". %s; %s %s \"" % (cognos.cognosprofile, create_cmd, options)
+
+    rc, stdout, stderr = cognos.module.run_command(cmd, use_unsafe_shell=True)
+
+
+from ansible.module_utils.basic import *
+
+main()

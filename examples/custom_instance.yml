@@ -1,0 +1,31 @@
+---
+#In this example we are creating a custom instance 
+  - hosts: all
+    gather_facts: True
+    pre_tasks:
+      # This is required to test on RedHat (No license on vagrant)
+      - name: Installing OL Public repository
+        get_url: 
+          url: "{{yum_repo}}"
+          dest: /etc/yum.repos.d/public-yum-release.repo
+        tags: download
+    roles:
+      - cognossrv
+    vars:
+      # Set the variable cognos_instances
+      # This is the identifier of the instance inside the response file
+      cognos_instances:
+        - instance: "Cognos"
+          name: "cognos" 
+          group_name: "cognos"
+          #Password:
+          #Optionally set the user's password to this crypted value. See the user example in the
+          #github examples directory for what this looks like in a playbook.
+          #See http://docs.ansible.com/ansible/faq.html#how-do-i-generate-crypted-passwords-for-the-user-module
+          #for details on various ways to generate these password values. Note on Darwin system,
+          #this value has to be cleartext. Beware of security issues.
+          password: "cognos"
+          options:
+            autostart: "YES" # YES or NO
+            start_during_install: "YES" # YES or NO
+            

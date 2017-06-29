@@ -1,0 +1,5 @@
+FROM centos:7.2
+
+COPY cognos_10.5.tar.gz /tmp/cognos_10.5.tar.gz
+
+CMD ["/usr/sbin/init"]

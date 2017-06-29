@@ -1,0 +1,23 @@
+---
+# example  url variable to download Cognos binaries
+  - hosts: all
+    gather_facts: True
+    pre_tasks:
+      # This is required to test on RedHat (No license on vagrant)
+      - name: Installing Public Repository
+        get_url: 
+          url: "{{yum_repo}}"
+          dest: /etc/yum.repos.d/public-yum-release.repo
+        tags: download
+
+    roles:
+      - { role: Stouts.limits, tags: [ 'limits' ] }
+      - cognossrv
+    vars:
+       # Define the cognos_binary and setup the URL to download.
+       # Variable location define where should put Cognos on ansible machine
+       # Variable dest define where should decompress Cognos Tarball on remote host
+       cognos_binary:
+         url: "fileserver://download/bi_svr_10.2.2_l86_ml.tar.gz"
+         location: "/vagrant/bi_svr_10.2.2_l86_ml.tar.gz"
+         dest: "/opt/ibm/insttemp"

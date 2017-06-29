@@ -1,0 +1,62 @@
+---
+  # Include variables at the start so they're in scope
+  - name: Include OS-Specific variables
+    include_vars: "{{ ansible_os_family }}.yml"
+
+  - include: get_cognos.yml
+    tags: download
+
+  - include: packages-redhat.yml
+    when: "'{{ansible_os_family}}' == 'RedHat'"
+
+  - include: packages-debian.yml
+    when: "'{{ansible_os_family}}' == 'Debian'"
+
+  - include: instance_users.yml
+    tags: ['users', 'setup']
+
+  - name: Disabling SELinux
+    selinux: state=disabled
+    tags: ['dont-on-docker', 'setup']
+    when: "'{{ansible_os_family}}' == 'RedHat'"
+
+  - name: Adding entry to /etc/hosts
+    lineinfile:
+      dest: /etc/hosts
+      regexp: "^{{ ansible_default_ipv4.address }} {{ ansible_hostname }}$"
+      line: "{{ ansible_default_ipv4.address }} {{ ansible_hostname }}"
+    tags: ['dont-on-docker', 'setup']
+
+  - name: Parse response file
+    template: src=response.ats dest={{cognos_binary.dest}}/response.ats
+    tags: parse
+
+  - name: Parse systemd file
+    template: src=cognos.service dest=/etc/systemd/system/cognos.service
+    tags: parse
+
+  - name: Installing Cognos 
+    command: "{{cognos_binary.dest}}/{{cognos_creates}}/issetup -s {{cognos_binary.dest}}/response.ats"
+    register: cognos_setup
+ #   args: 
+ #     creates: "{{resp.file}}"
+    tags: install
+
+  - name: Change Cognos Install Directory Permissions
+    file: path="{{cognos_instdir}}" owner=cognos group=cognos recurse=yes
+
+  - name: Setup results
+    debug: var=cognos_setup
+    tags: download
+
+  - name: Validating the current installation
+    shell: /usr/bin/ls -ld "{{cognos_instdir}}"
+    register: cognos_val
+    failed_when: False
+    changed_when: False
+    tags: ['install', 'validate']
+
+  - name: Validate results
+    debug: var=cognos_val
+    tags: download
+    

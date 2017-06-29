@@ -1,0 +1,43 @@
+---
+cognos_creates: linuxi38664h # Select Distribution Plattform Intel/PPC, Linux/AIX
+cognos_packages:
+ - pam
+ - pam-devel.i686
+ - libaio
+ - ksh
+ - unzip
+ - motif.i686
+
+# yum_repo: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+# Check download_cognos.yml  to find how you can use this role to download a Cognos from a remote repo
+cognos_binary:
+  location: "/opt/ibm/insttemp/bi_svr_10.2.2_l86_ml.tar.gz"
+  dest: "/opt/ibm/insttemp"
+
+# Install Directory
+cognos_instdir: "/opt/ibm/cognos"
+
+# Response file keywords: 
+# https://www.ibm.com/support/knowledgecenter/SSEP7J_10.2.2/com.ibm.swg.ba.cognos.c8pp_inst.10.2.2.doc/t_c8bi_setupunattendedinstallation.html
+
+resp:
+  Dialog1:  "DE=1"
+  Dialog2:  "I Agree=y"
+  Dialog3:  "I Agree=y"
+  Dialog4:  "APPDIR={{cognos_instdir}}"
+  CompList:  "C8BISRVR_APP=0"
+
+systemd:
+  ExecStart "/opt/ibm/cognos/bin64/cogconfig.sh -s"
+
+# cache yum/apt
+make_cache: no
+
+# Those params are mandatory to create a Cognos instance
+cognos_instances:
+  - instance: "Cognos"
+    id: "777"
+    gid: "777"
+    name: "cognos"
+    group_name: "cognos"

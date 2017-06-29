@@ -1,0 +1,35 @@
+---
+# This is to test on Docker
+  - hosts: all
+    gather_facts: True
+    pre_tasks:
+
+      - name: Create /Cognos directory
+        file: 
+          path: /opt/ibm/cognos
+          state: directory
+          mode: 0755
+        tags: users
+
+    roles:
+      - cognos
+    vars:
+       # Define the cognos_binary and setup the URL to download.
+       # Variable location define where should put cognos on ansible machine
+       # Variable dest define where should decompress Cognos on remote host
+      cognos_binary:
+        location: "/tmp/cognos.tar.gz"
+        dest: "/tmp"
+
+      cognos_instances:
+        - instance: "Cognos"
+          name: "cognos"
+          group_name: "cognos"
+          options:
+            autostart: "YES"
+            start_during_install: "YES"
+
+        - instance: "Cognos"
+          name: "cognos"
+          group_name: "cognos"
+          home_directory: "/cognos/cognosinst2"
