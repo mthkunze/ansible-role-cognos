@@ -66,31 +66,6 @@ def main():
     # Only if the instance is down
     cognos.start_instance()
 
-#    if cognos.is_cognos_already_created():
-#        cognos.module.exit_json(changed=False, msg="Database %s already created, moving on!" % cognos.cognos_name)
-#
-#    create_cmd = "cognos \"create database %s " % cognos.cognos_name
-#    options = ""
-#    # This is default True
-#    if not cognos.automatic:
-#        options += " automatic storage no"
-#    if cognos.path:
-#        options += " on %s" % cognos.path
-#
-#        # Validate if automatic_storage == no then only one path can be used
-#        if not cognos.automatic:
-#
-#            #Validate if path contains a comma separated value
-#            if "," in cognos.path:
-#                cognos.module.fail_json(changed=False, msg="If you don't want automatic storage "
-#                                                    "you can't create a Database on more than one path")
-#    if cognos.codeset:
-#        options += " using codeset %s" % cognos.codeset
-#    if cognos.territory:
-#        options += " territory %s" % cognos.territory
-#    if cognos.pagesize:
-#        options += " pagesize %s" % cognos.pagesize
-#
     cmd = ". %s; %s %s \"" % (cognos.cognosprofile, create_cmd, options)
 
     rc, stdout, stderr = cognos.module.run_command(cmd, use_unsafe_shell=True)
