@@ -5,7 +5,7 @@ services:
   - docker
 before_install:
   # Pull container
-  - 'sudo docker pull mkde/centos_cognos:1.0'
+  - 'sudo docker pull mkde/centos:7'
   # Customize container
   - 'sudo docker build --rm=true --file=tests/Dockerfile --tag=centos_cognos:latest tests'
 
